@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maca/connection/api_connection.dart';
+import 'package:maca/data/app_data.dart';
 import 'package:maca/function/app_function.dart';
 import 'package:maca/service/api_service.dart';
 import 'package:maca/styles/app_style.dart';
@@ -20,41 +21,54 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode focusNode = FocusNode();
 
   //For controller
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController bedNoController = TextEditingController();
+  final TextEditingController phoneNoController = TextEditingController();
 
   //For bool variable
   bool isLoginPage = true;
   bool isKeyboardActive = false;
 
   //For string variable
-  String bedNo = "";
+  String? bedNo = "";
+
+  //For dynamic variable
+  dynamic occupiedBedlist = [];
+  dynamic availableBet = [];
+  dynamic bedActive = {
+    "user_bed": null,
+    "id": null,
+  };
 
   @override
   void initState() {
     super.initState();
     // Add a listener to the focus node
-
+    getBedAvailable();
     focusNode.addListener(() {
       setState(() {
         isKeyboardActive = focusNode.hasFocus;
-        print("focusNode: $isKeyboardActive");
       });
     });
   }
 
   void handleLogin(String username, String password) {
-    print("Login Data:");
-    print("Username: $username");
-    print("Password: $password");
     AppFunction().macaPrint(username);
   }
 
-  void bedSelectHandle(String selectedBedNo) {
-    print("selectedBedNo: $selectedBedNo");
+  void handleRgistration(dynamic data) {
+    AppFunction().macaPrint(data);
+  }
+
+  void bedSelectHandle(dynamic selectedBedNo) {
+    AppFunction().macaPrint(selectedBedNo);
     setState(() {
-      bedNo = selectedBedNo;
+      bedNo = selectedBedNo["user_bed"];
+      bedActive = selectedBedNo;
     });
+    AppFunction().macaPrint(bedActive["user_bed"]);
   }
 
   void pageSwitch() {
@@ -70,8 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<dynamic> getBedAvailable() async {
-    dynamic betDetails = await ApiService()
-        .apiCallService(endpoint: PostUrl().bedList, method: "GET");
+    dynamic response = await ApiService()
+        .apiCallService(endpoint: GetUrl().bedList, method: "GET");
+    occupiedBedlist =
+        AppFunction().macaApiResponsePrintAndGet(response, "data");
+    availableBet =
+        AppFunction().createBedStatusList(occupiedBedlist, Appdata().allBeds);
   }
 
   @override
@@ -149,12 +167,22 @@ class _LoginScreenState extends State<LoginScreen> {
               child: isLoginPage
                   ? KeyedSubtree(
                       key: const ValueKey('login'),
-                      child: loginSegment(pageSwitch, usernameController,
+                      child: loginSegment(pageSwitch, userNameController,
                           passwordController, focusNode, handleLogin))
                   : KeyedSubtree(
                       key: const ValueKey('register'),
                       child: registrationSegment(
-                          context, pageSwitch, bedNo, bedSelectHandle)),
+                          context,
+                          pageSwitch,
+                          bedActive,
+                          availableBet,
+                          emailController,
+                          passwordController,
+                          userNameController,
+                          bedNoController,
+                          phoneNoController,
+                          bedSelectHandle,
+                          handleRgistration)),
             ),
           )
           // Add other widgets here as needed
@@ -256,26 +284,97 @@ Widget loginSegment(
 }
 
 @override
-Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
-    Function(String selectedBedNo) bedSelectHandle) {
-  String? selectedBedNo;
-  final List<String> bedNumbers = ['Bed 1', 'Bed 2', 'Bed 3', 'Bed 4'];
+Widget registrationSegment(
+    BuildContext context,
+    VoidCallback pageSwitch,
+    dynamic bedNo,
+    dynamic bednumbers,
+    TextEditingController emailController,
+    TextEditingController passwordController,
+    TextEditingController userNameController,
+    TextEditingController bedNoController,
+    TextEditingController phoneNoController,
+    Function(
+      dynamic selectedBedNo,
+    ) bedSelectHandle,
+    Function(dynamic data) handleRgistration) {
+  dynamic bedNumbers = bednumbers;
 
   void showBedSelectionModal() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      isScrollControlled: true, // Allows the modal to take more space
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20)), // Optional rounded corners
+      ),
       builder: (context) {
-        return ListView.builder(
-          itemCount: bedNumbers.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(bedNumbers[index]),
-              onTap: () {
-                bedSelectHandle(bedNumbers[index]);
-                Navigator.pop(context);
-              },
-            );
-          },
+        return Container(
+          padding: const EdgeInsets.all(8.0),
+          alignment: Alignment.center,
+          width: double.infinity,
+          height: (MediaQuery.of(context).size.height - 64) / 3,
+          child: Column(
+            children: [
+              const Row(
+                children: [Text("ami"), Text("tumi")],
+              ),
+              Wrap(
+                spacing: 16.0, // Space between items horizontally
+                runSpacing: 16.0, // Space between rows
+                children: bedNumbers.map<Widget>((bed) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (!bed["is_active"]) {
+                        bedSelectHandle(bed);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Container(
+                      width: (MediaQuery.of(context).size.width - 64) /
+                          5, // 3 items per row
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: bed["is_active"]
+                            ? AppColors.themeLite
+                            : bed["user_bed"] == bedNo["user_bed"]
+                                ? AppColors.theme
+                                : AppColors.themeWhite,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromARGB(83, 37, 37, 37),
+                            blurRadius: 10, // Spread of the blur
+                            offset:
+                                Offset(0, 4), // Horizontal and vertical offset
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            bed["user_bed"],
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: bed["is_active"]
+                                  ? AppColors.themeWhite
+                                  : bed["user_bed"] != bedNo["user_bed"]
+                                      ? AppColors.theme
+                                      : AppColors.themeWhite,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -300,6 +399,7 @@ Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
           height: 20,
         ),
         TextField(
+          controller: userNameController,
           decoration: AppInputStyles.textFieldDecoration(
             hintText: 'Enter your username',
             prefixIcon: Icons.person,
@@ -310,6 +410,7 @@ Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
           height: 16,
         ),
         TextField(
+          controller: emailController,
           decoration: AppInputStyles.textFieldDecoration(
             hintText: 'Enter email',
             prefixIcon: Icons.email,
@@ -340,9 +441,9 @@ Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
                       width: 10,
                     ),
                     Text(
-                      selectedBedNo ?? 'Enter bed no',
+                      bedNo["user_bed"] ?? 'Enter bed no',
                       style: TextStyle(
-                        color: selectedBedNo == null
+                        color: bedNo["user_bed"] == null
                             ? Colors.grey
                             : AppColors.header1, // Replace with your color
                       ),
@@ -361,9 +462,10 @@ Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
           height: 16,
         ),
         TextField(
+          controller: phoneNoController,
           decoration: AppInputStyles.textFieldDecoration(
-            hintText: 'Enter your password',
-            prefixIcon: Icons.password,
+            hintText: 'Phone no',
+            prefixIcon: Icons.phone_android,
           ),
           style: const TextStyle(color: AppColors.header1), // Text style
         ),
@@ -371,6 +473,8 @@ Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
           height: 16,
         ),
         TextField(
+          controller: passwordController,
+          obscureText: true,
           decoration: AppInputStyles.textFieldDecoration(
             hintText: 'Enter your password',
             prefixIcon: Icons.password,
@@ -382,8 +486,15 @@ Widget registrationSegment(BuildContext context, VoidCallback pageSwitch, bedNo,
         ),
         ElevatedButton(
           onPressed: () {
+            dynamic regJson = {
+              "userName": userNameController.text,
+              "email": emailController.text,
+              "bedNo": bedNo["id"],
+              "phoneNo": phoneNoController.text,
+              "password": passwordController.text
+            };
             // Add your button's functionality here
-            print("Login button pressed");
+            handleRgistration(regJson);
           },
           style: AppButtonStyles.elevatedButtonStyle(),
           child: const Text(

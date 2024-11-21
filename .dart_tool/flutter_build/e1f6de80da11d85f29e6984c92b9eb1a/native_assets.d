@@ -1,0 +1,1 @@
+ D:\\GRAPHINOVAS\\New\ folder\\maca4\\.dart_tool\\flutter_build\\e1f6de80da11d85f29e6984c92b9eb1a\\native_assets.yaml: 

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:maca/screen/home_screen.dart';
 import 'package:maca/screen/login_screen.dart';
 import 'package:maca/styles/colors/app_colors.dart';
 
