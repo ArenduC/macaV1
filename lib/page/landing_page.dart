@@ -39,6 +39,7 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text('maca'),
           actions: <Widget>[
             IconButton(
