@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:maca/connection/api_connection.dart';
+import 'package:maca/function/app_function.dart';
 import 'package:maca/service/api_service.dart';
+import 'package:maca/store/local_store.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -16,8 +18,9 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   void initState() {
-    borderList();
     super.initState();
+    borderList();
+    getLoginDetails();
   }
 
   Future<void> borderList() async {
@@ -33,6 +36,12 @@ class _LandingPageState extends State<LandingPage> {
         print("object: $borderListData");
       }
     }
+  }
+
+  getLoginDetails() async {
+    dynamic loginDetails;
+    loginDetails = LocalStore().getStore(ListOfStoreKey.loginDetails);
+    AppFunction().macaPrint(loginDetails);
   }
 
   @override

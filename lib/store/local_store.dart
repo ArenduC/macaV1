@@ -1,17 +1,21 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+class ListOfStoreKey {
+  static const String loginDetails = "loginDetails";
+  static const String borderDetails = "borderDetails";
+  static const Map<String, String> allKeys = {
+    "loginDetails": loginDetails,
+    "borderDetails": borderDetails,
+  };
+}
+
 class LocalStore {
 // Create storage
   final storage = const FlutterSecureStorage();
 
-  dynamic listOfKeyStore = [
-    {"LOGINDETAILS": "LOGINDETAILS"},
-    {"BORDERDETAILS": "BORDERDETAILS"}
-  ];
-
 // Read value
   getStore(dynamic key) async {
-    if (listOfKeyStore.contains(key)) {
+    if (ListOfStoreKey.allKeys.containsKey(key)) {
       dynamic value = await storage.read(key: key);
       return value;
     }
@@ -23,8 +27,8 @@ class LocalStore {
   }
 
 // Write value
-  setStore(dynamic key, dynamic value) async {
-    if (listOfKeyStore.contains(key)) {
+  Future<dynamic> setStore(dynamic key, dynamic value) async {
+    if (ListOfStoreKey.allKeys.containsKey(key)) {
       await storage.write(key: key, value: value);
     }
   }

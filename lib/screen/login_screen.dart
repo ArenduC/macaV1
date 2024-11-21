@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maca/connection/api_connection.dart';
@@ -7,6 +9,7 @@ import 'package:maca/data/app_data.dart';
 import 'package:maca/function/app_function.dart';
 import 'package:maca/screen/home_screen.dart';
 import 'package:maca/service/api_service.dart';
+import 'package:maca/store/local_store.dart';
 import 'package:maca/styles/app_style.dart';
 import 'package:maca/styles/colors/app_colors.dart';
 
@@ -63,6 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
     loginData = AppFunction().macaApiResponsePrintAndGet(response);
 
     if (loginData["isSuccess"] == true) {
+      AppFunction().macaApiResponsePrintAndGet(response, "data");
+      LocalStore().setStore(ListOfStoreKey.loginDetails, "data");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
