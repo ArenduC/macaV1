@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ListOfStoreKey {
@@ -17,7 +19,7 @@ class LocalStore {
   getStore(dynamic key) async {
     if (ListOfStoreKey.allKeys.containsKey(key)) {
       dynamic value = await storage.read(key: key);
-      return value;
+      return jsonDecode(value);
     }
   }
 
@@ -29,7 +31,7 @@ class LocalStore {
 // Write value
   Future<dynamic> setStore(dynamic key, dynamic value) async {
     if (ListOfStoreKey.allKeys.containsKey(key)) {
-      await storage.write(key: key, value: value);
+      await storage.write(key: key, value: jsonEncode(value));
     }
   }
 }

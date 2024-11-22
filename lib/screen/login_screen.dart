@@ -67,7 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (loginData["isSuccess"] == true) {
       AppFunction().macaApiResponsePrintAndGet(response, "data");
-      LocalStore().setStore(ListOfStoreKey.loginDetails, "data");
+      LocalStore().setStore(ListOfStoreKey.loginDetails,
+          AppFunction().macaApiResponsePrintAndGet(response, "data"));
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),

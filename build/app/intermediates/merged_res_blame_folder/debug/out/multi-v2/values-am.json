@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.maca.app-mergeDebugResources-9:/values-am/values-am.xml",
+            "outputFile": "com.example.maca.app-mergeDebugResources-10:/values-am/values-am.xml",
             "map": [
                 {
                     "source": "C:\\Users\\arend\\.gradle\\caches\\transforms-3\\284a410c767ad6c7a2b0ffc8d8d85981\\transformed\\core-1.6.0\\res\\values-am\\values-am.xml",

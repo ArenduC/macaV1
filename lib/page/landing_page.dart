@@ -40,7 +40,7 @@ class _LandingPageState extends State<LandingPage> {
 
   getLoginDetails() async {
     dynamic loginDetails;
-    loginDetails = LocalStore().getStore(ListOfStoreKey.loginDetails);
+    loginDetails = await LocalStore().getStore(ListOfStoreKey.loginDetails);
     AppFunction().macaPrint(loginDetails);
   }
 
