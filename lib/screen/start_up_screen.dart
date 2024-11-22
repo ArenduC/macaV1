@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:maca/auth/maca_auth.dart';
+import 'package:maca/screen/home_screen.dart';
 import 'package:maca/screen/login_screen.dart';
 import 'package:maca/styles/colors/app_colors.dart';
 
@@ -17,10 +19,14 @@ class _StartUpScreenState extends State<StartUpScreen> {
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 4), () {
+    Timer(const Duration(seconds: 4), () async {
+      bool isLoggedIn = await MacaAuth().loginCheking();
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(
+            builder: (context) =>
+                isLoggedIn ? const HomeScreen() : const LoginScreen()),
       );
     });
   }

@@ -5,9 +5,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class ListOfStoreKey {
   static const String loginDetails = "loginDetails";
   static const String borderDetails = "borderDetails";
+  static const String loginStatus = "loginStatus";
   static const Map<String, String> allKeys = {
     "loginDetails": loginDetails,
     "borderDetails": borderDetails,
+    "loginStatus": loginStatus,
   };
 }
 
@@ -16,11 +18,16 @@ class LocalStore {
   final storage = const FlutterSecureStorage();
 
 // Read value
-  getStore(dynamic key) async {
+  Future<dynamic> getStore(dynamic key) async {
     if (ListOfStoreKey.allKeys.containsKey(key)) {
-      dynamic value = await storage.read(key: key);
-      return jsonDecode(value);
+      String? value = await storage.read(key: key);
+      if (value != null) {
+        return jsonDecode(value);
+      } else {
+        return null;
+      }
     }
+    return null;
   }
 
 // Delete value

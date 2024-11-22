@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 class AppFunction {
-  macaPrint(dynamic data) {
+  macaPrint(dynamic data, [dynamic message]) {
     if (kDebugMode) {
-      print("macaPrint: $data");
+      print("  ${message ?? "macaPrint:"}  $data");
     }
   }
 
