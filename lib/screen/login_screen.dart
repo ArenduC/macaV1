@@ -240,7 +240,7 @@ Widget loginSegment(
           controller: usernameController,
           decoration: AppInputStyles.textFieldDecoration(
             hintText: 'Enter your username',
-            prefixIcon: Icons.person,
+            prefixIcon: Icons.account_circle_outlined,
           ),
           style: const TextStyle(color: AppColors.header1), // Text style
         ),
@@ -318,6 +318,32 @@ Widget registrationSegment(
     Function(dynamic data) handleRgistration) {
   dynamic bedNumbers = bednumbers;
 
+  Widget circularIndicator(
+    dynamic title,
+    Color indicatorColor,
+  ) {
+    return Row(
+      children: [
+        Container(
+          height: 15,
+          width: 15,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+              color: indicatorColor,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              boxShadow: [AppBoxShadow.defaultBoxShadow]),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Text(
+          title,
+          style: AppTextStyles.indicatorTextStyle,
+        )
+      ],
+    );
+  }
+
   void showBedSelectionModal() {
     showModalBottomSheet(
       context: context,
@@ -335,8 +361,54 @@ Widget registrationSegment(
           height: (MediaQuery.of(context).size.height - 64) / 3,
           child: Column(
             children: [
-              const Row(
-                children: [Text("ami"), Text("tumi")],
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 5,
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: const BoxDecoration(
+                      color: AppColors.textHint,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/APPSVGICON/bed.svg',
+                          width: 12,
+                          height: 12,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          "Bed available",
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.theme),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        circularIndicator("Idle", AppColors.themeWhite),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        circularIndicator("Occupied", AppColors.textHint),
+                      ],
+                    )
+                  ],
+                ),
               ),
               Wrap(
                 spacing: 16.0, // Space between items horizontally
@@ -420,7 +492,7 @@ Widget registrationSegment(
           controller: userNameController,
           decoration: AppInputStyles.textFieldDecoration(
             hintText: 'Enter your username',
-            prefixIcon: Icons.person,
+            prefixIcon: Icons.account_circle_outlined,
           ),
           style: const TextStyle(color: AppColors.header1), // Text style
         ),
@@ -431,7 +503,7 @@ Widget registrationSegment(
           controller: emailController,
           decoration: AppInputStyles.textFieldDecoration(
             hintText: 'Enter email',
-            prefixIcon: Icons.email,
+            prefixIcon: Icons.alternate_email,
           ),
           style: const TextStyle(color: AppColors.header1), // Text style
         ),
@@ -469,7 +541,7 @@ Widget registrationSegment(
                   ],
                 ),
                 const Icon(
-                  Icons.arrow_downward,
+                  Icons.arrow_drop_down_circle_rounded,
                   color: AppColors.themeLite,
                 ),
               ],

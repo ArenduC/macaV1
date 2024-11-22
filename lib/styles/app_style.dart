@@ -37,6 +37,8 @@ class AppTextStyles {
     fontWeight: FontWeight.normal,
     color: AppColors.themeLite,
   );
+  static const TextStyle indicatorTextStyle = TextStyle(
+      fontSize: 10, fontWeight: FontWeight.w400, color: AppColors.theme);
 }
 
 class AppInputStyles {
@@ -116,4 +118,12 @@ class AppButtonStyles {
       ),
     );
   }
+}
+
+class AppBoxShadow {
+  static const BoxShadow defaultBoxShadow = BoxShadow(
+      color: Color.fromRGBO(0, 0, 0, 0.25),
+      offset: Offset(0, 4),
+      blurRadius: 4,
+      spreadRadius: 0);
 }
